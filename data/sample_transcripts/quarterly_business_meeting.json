@@ -1,0 +1,6 @@
+{
+  "meetingTitle": "Q3 Global Strategy & AI Product Roadmap",
+  "organization": "Cognizant Global Solutions",
+  "date": "2026-08-18",
+  "text": "CHAIRWOMAN: Good morning executive committee members. Let us begin our quarterly product evaluation.\n\nDAVID: Thank you Elena. In Q3, our cloud analytics revenue grew by 28% across North America and Europe. The enterprise adoption of our automated metadata tagging platform has exceeded forecasts.\n\nSARAH: On the research side, our engineering department completed the integration of transformer-based sentiment analysis and spaCy named entity recognition, reducing inference latency by 45%.\n\nCHAIRWOMAN: That is outstanding progress Sarah. What are the key bottlenecks we must resolve before the Q4 enterprise rollout?\n\nDAVID: Primarily infrastructure scaling. We need to allocate additional GPU compute clusters in AWS and Google Cloud to support concurrent 5000-word transcript processing.\n\nSARAH: We have also scheduled security audits for SOC2 and GDPR compliance regarding data residency and user authentication.\n\nCHAIRWOMAN: Approved. Let us proceed with the budget allocation and ensure our client demonstrations for the hackathon are finalized by next Tuesday."
+}

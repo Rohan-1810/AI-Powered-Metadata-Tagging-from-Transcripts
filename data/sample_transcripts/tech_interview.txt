@@ -1,0 +1,29 @@
+INTERVIEWER:
+Welcome Alex. Thanks for joining us today for the Senior AI Engineer technical discussion at Cognizant.
+
+ALEX:
+Thank you, Sarah. I'm excited to be here and discuss natural language processing architectures.
+
+INTERVIEWER:
+Great. Let's start with transformer models. How do you approach fine-tuning large language models for domain-specific entity extraction?
+
+ALEX:
+When approaching domain-specific NER, I typically begin by evaluating whether zero-shot or few-shot inference with a base model like RoBERTa or spaCy transformers suffices. If the domain terminology is specialized, we curate an annotated dataset using active learning and fine-tune token classification heads with focal loss.
+
+INTERVIEWER:
+That makes sense. How do you handle latency and throughput requirements in real-time inference microservices?
+
+ALEX:
+We leverage model quantization, ONNX runtime acceleration, and batching mechanisms in FastAPI or Triton. Furthermore, caching frequent vector embeddings in Redis minimizes redundant forward passes.
+
+INTERVIEWER:
+Excellent. What about handling multimodal transcripts with scene segmentation and sentiment tracking?
+
+ALEX:
+For hierarchical transcripts, we use hybrid parsing. Rule-based regex handles deterministic timestamp or scene boundaries, while sequence classification models evaluate emotional valence per segment.
+
+INTERVIEWER:
+That aligns well with our production roadmap. Do you have any questions for our engineering leadership?
+
+ALEX:
+Yes, I'd love to learn more about the team's distributed inference cluster on Google Cloud Platform.

@@ -1,0 +1,79 @@
+const axios = require('axios');
+const Transcript = require('../models/Transcript');
+
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+
+/**
+ * Sends transcript text to the Python FastAPI NLP microservice and updates MongoDB document.
+ * @param {string} transcriptId - The MongoDB document ID
+ * @param {string} rawText - The transcript text
+ * @param {string} fileName - Original file name if available
+ */
+const analyzeTranscript = async (transcriptId, rawText, fileName = '') => {
+  try {
+    // 1. Transition state to 'processing'
+    await Transcript.findByIdAndUpdate(transcriptId, {
+      status: 'processing',
+      error: null
+    });
+
+    console.log(`[aiService] Dispatching transcript ${transcriptId} to AI Microservice (${AI_SERVICE_URL}/analyze)...`);
+
+    // 2. Call Python FastAPI AI Service with a 60s timeout
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/analyze`,
+      {
+        text: rawText,
+        filename: fileName
+      },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 60000 // 60 seconds
+      }
+    );
+
+    const metadata = response.data;
+
+    // 3. Persist extracted metadata and mark as completed
+    const updated = await Transcript.findByIdAndUpdate(
+      transcriptId,
+      {
+        status: 'completed',
+        metadata: metadata,
+        error: null
+      },
+      { new: true }
+    );
+
+    console.log(`[aiService] Transcript ${transcriptId} successfully processed and saved.`);
+    return updated;
+
+  } catch (error) {
+    let errorMessage = 'Metadata processing failed. Please retry.';
+
+    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      errorMessage = 'AI NLP Microservice is unavailable or offline. Please ensure Python FastAPI service is running on port 8000.';
+    } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      errorMessage = 'AI processing timed out after 60 seconds.';
+    } else if (error.response && error.response.data && error.response.data.detail) {
+      errorMessage = `AI Processing Error: ${error.response.data.detail}`;
+    } else if (error.message) {
+      errorMessage = `Processing failure: ${error.message}`;
+    }
+
+    console.error(`[aiService] Error processing transcript ${transcriptId}:`, errorMessage);
+
+    // 4. Update status to failed with exact safe error description
+    await Transcript.findByIdAndUpdate(transcriptId, {
+      status: 'failed',
+      error: errorMessage
+    });
+
+    return null;
+  }
+};
+
+module.exports = {
+  analyzeTranscript,
+  AI_SERVICE_URL
+};
